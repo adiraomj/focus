@@ -10,6 +10,7 @@ define( 'SITEORIGIN_THEME_VERSION', 'dev' );
 define( 'SITEORIGIN_THEME_JS_PREFIX', '' );
 define( 'SITEORIGIN_THEME_PREMIUM_URL', 'https://siteorigin.com/downloads/premium/' );
 
+include get_template_directory() . '/inc/class-tgm-plugin-activation.php';
 include get_template_directory().'/inc/settings/settings.php';
 
 include get_template_directory().'/inc/plus.php';
@@ -17,6 +18,7 @@ include get_template_directory().'/inc/video.php';
 include get_template_directory().'/inc/settings.php';
 include get_template_directory().'/inc/widgets.php';
 include get_template_directory().'/inc/legacy.php';
+include get_template_directory().'/inc/webfonts/webfonts.php';
 
 if ( ! function_exists( 'focus_setup' ) ) :
 /**
@@ -73,7 +75,7 @@ function focus_setup() {
 	add_theme_support( 'custom-logo' );
 
 	add_theme_support( 'custom-background' , array(
-		'default-color'          => '#F6F4F2',
+		'default-color' => '#F6F4F2',
 	));
 
 	/**
@@ -84,6 +86,17 @@ function focus_setup() {
 		'responsive' => siteorigin_setting('layout_responsive'),
 	) );
 
+	/**
+	 * Add the default webfonts.
+	 */
+	siteorigin_webfonts_add_font( 'Open Sans', array( 300, 400 ) );
+
+	/*
+	 * Let WordPress manage the document title.
+	 * By adding theme support, we declare that this theme does not use a
+	 * hard-coded <title> tag in the document head, and expect WordPress to
+	 * provide it for us.
+	 */
 	add_theme_support( 'title-tag' );
 
 	/**
@@ -285,7 +298,7 @@ add_action('wp_head', 'focus_footer_widget_style', 15);
  */
 function focus_comment_form_defaults( $defaults ) {
 	if ( ! siteorigin_setting( 'comments_hide_allowed_tags' ) ) {
-		$defaults['comment_notes_after'] = '<p class="form-allowed-tags">' . sprintf( __( 'You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes: %s', 'ultra' ), ' <code>' . allowed_tags() . '</code>' ) . '</p>';
+		$defaults['comment_notes_after'] = '<p class="form-allowed-tags">' . sprintf( __( 'You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes: %s', 'focus' ), ' <code>' . allowed_tags() . '</code>' ) . '</p>';
 	}
 
 	return $defaults;
@@ -369,3 +382,41 @@ function focus_wp_header(){
 
 }
 add_action('wp_head', 'focus_wp_header');
+
+/**
+ * Add some plugins to TGM plugin activation
+ */
+function focus_recommended_plugins(){
+	$plugins = array(
+		array(
+			'name'      => __('SiteOrigin Page Builder', 'focus'),
+			'slug'      => 'siteorigin-panels',
+			'required'  => false,
+		),
+		array(
+			'name'      => __('SiteOrigin Widgets Bundle', 'focus'),
+			'slug'      => 'so-widgets-bundle',
+			'required'  => false,
+		),
+		array(
+			'name'      => __('SiteOrigin CSS', 'focus'),
+			'slug'      => 'so-css',
+			'required'  => false,
+		),
+	);
+
+	$config = array(
+		'id'           => 'tgmpa-focus',         // Unique ID for hashing notices for multiple instances of TGMPA.
+		'menu'         => 'tgmpa-install-plugins', // Menu slug.
+		'parent_slug'  => 'themes.php',            // Parent menu slug.
+		'capability'   => 'edit_theme_options',    // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
+		'has_notices'  => true,                    // Show admin notices or not.
+		'dismissable'  => true,                    // If false, a user cannot dismiss the nag message.
+		'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
+		'is_automatic' => false,                   // Automatically activate plugins after installation or not.
+		'message'      => '',                      // Message to output right before the plugins table.
+	);
+
+	tgmpa( $plugins, $config );
+}
+add_action( 'tgmpa_register', 'focus_recommended_plugins' );

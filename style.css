@@ -7,10 +7,9 @@ Description: Focus is a great theme for showing off your videos. It supports vid
 Version: dev
 License: GNU General Public License 2.0
 License URI: license.txt
-Tags: one-column, two columns, right-sidebar, grid-layout, custom-background, custom-menu, featured-images, footer-widgets, full-width-template, theme-options, threaded-comments, translation-ready, entertainment
+Tags: one-column, two-columns, right-sidebar, grid-layout, custom-background, custom-menu, featured-images, footer-widgets, full-width-template, theme-options, threaded-comments, translation-ready, entertainment
 Text Domain: focus
 */
-@import url(//fonts.googleapis.com/css?family=Open+Sans:400,300);
 /**
  * #.# Reset
  */
@@ -684,7 +683,7 @@ body {
           padding: 18px 0; }
         #masthead .site-navigation .menu-wrapper ul ul {
           position: absolute;
-          z-index: 10;
+          z-index: 9999;
           width: 180px;
           top: 100%;
           left: 50%;
@@ -1151,6 +1150,8 @@ h2.archive-title {
   margin-top: 25px;
   background: #2A2B2F;
   padding: 25px 0; }
+  .site-footer.no-content {
+    margin-top: 0; }
 
 /**
  * #.# Call To Action
@@ -1507,6 +1508,8 @@ footer .site-info {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   padding-left: 30px; }
+  #secondary .updated {
+    display: none; }
 
 /**
  * #.# Page Types
@@ -1519,23 +1522,22 @@ footer .site-info {
   width: auto;
   float: none; }
 
-.page-template-page-full-no-title-php #content {
-  width: auto;
-  float: none; }
-
-.page-template-page-full-no-title-php #masthead {
+.page-template-page-full-no-title #masthead {
   margin-bottom: 25px; }
 
-.page-template-page-full-no-title-php .content-container {
+.page-template-page-full-no-title #content {
+  float: none;
+  width: auto; }
+
+.page-template-page-full-no-title .content-container {
   margin-top: 0; }
 
-.page-template-page-full-no-title-php.no-title-page-title #masthead {
-  margin-bottom: 0; }
+.page-template-page-full-no-title #single-header {
+  margin-top: -25px;
+  margin-bottom: 25px; }
 
-.page-template-page-full-no-title-php.no-title-page-title .content-container {
-  margin-top: 25px; }
-
-#nav-below, #posts-nav {
+#nav-below,
+#posts-nav {
   height: 1em;
   line-height: 1;
   margin-top: 20px;

@@ -14,12 +14,11 @@ get_header(); the_post(); ?>
 
 	<div id="primary" class="content-area">
 
-		<?php $page_header = get_post_meta( get_the_ID(), 'focus_page_header', true );
-
-		if ( isset( $page_header['move'] ) && $page_header['move'] ) {
-			$panels_data = get_post_meta( get_the_ID(), 'panels_data', true );
-			if( empty( $panels_data ) ) return;
-
+		<?php
+		$page_header = get_post_meta( get_the_ID(), 'focus-page-header', true );
+		$panels_data = get_post_meta( get_the_ID(), 'panels_data', true );
+		
+		if ( isset( $page_header ) && $page_header == 'yes' && !empty( $panels_data ) ) {
 			$top_area_widgets = array();
 
 			for ( $i = 0; $i < count( $panels_data['widgets'] ); $i++ ) {
@@ -35,27 +34,28 @@ get_header(); the_post(); ?>
 			}
 			echo '<div id="single-header">' . ob_get_clean() . '</div>';
 		} ?>
+		<?php if ( focus_display_content_area() ) : ?>
+			<div class="container">
+				<div class="container-decoration"></div>
 
-		<div class="container">
-			<div class="container-decoration"></div>
+				<div class="content-container">
+					<div id="content" class="site-content" role="main">
 
-			<div class="content-container">
-				<div id="content" class="site-content" role="main">
+						<div class="entry-content">
+							<?php the_content() ?>
+						</div>
 
-					<div class="entry-content">
-						<?php the_content() ?>
-					</div>
+						<?php
+						// If comments are open or we have at least one comment, load up the comment template
+						if ( comments_open() || '0' != get_comments_number() ) comments_template( '', true );
+						?>
+					</div><!-- #content .site-content.content-container -->
 
-					<?php
-					// If comments are open or we have at least one comment, load up the comment template
-					if ( comments_open() || '0' != get_comments_number() ) comments_template( '', true );
-					?>
-				</div><!-- #content .site-content.content-container -->
+					<div class="clear"></div>
+				</div>
 
-				<div class="clear"></div>
 			</div>
-
-		</div>
+		<?php endif; ?>
 	</div><!-- #primary .content-area -->
 
 <?php get_footer(); ?>

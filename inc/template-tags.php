@@ -134,13 +134,18 @@ if ( ! function_exists( 'focus_posted_on' ) ) :
  */
 function focus_posted_on() {
 	printf(
-		__('Posted On %s in %s with %s.', 'focus'),
-		get_the_date(),
-		get_the_category_list(', '),
-		sprintf(_n( 'One Comment', '%s Comments', get_comments_number(), 'focus' ), get_comments_number())
+		__( 'Posted On %s in %s with %s.', 'focus' ),
+		sprintf( '<time class="entry-date" datetime="%1$s">%2$s</time> <time class="updated" datetime="%3$s">%4$s</time>',
+			esc_attr( get_the_date( 'c' ) ),
+			apply_filters( 'focus_posted_on_date', esc_html( get_the_date() ) ),
+			esc_attr( get_the_modified_date( 'c' ) ),
+			esc_html( get_the_modified_date() )
+		),
+		'<span class="post-categories">'. get_the_category_list( ', ' ) .'</span>',
+		'<span class="post-comments">'. sprintf( _n( 'One Comment', '%s Comments', get_comments_number(), 'focus' ), get_comments_number() ) .'</span>'
 	);
 
-	the_tags(__('Tagged: ', 'focus'), ', ', '.');
+	the_tags( '<span class="post-tags"> '. __( 'Tagged: ', 'focus' ), ', ', '.</span>' );
 }
 endif;
 
@@ -256,10 +261,10 @@ endif;
  */
 function focus_replace_panels_data( $data, $post_id ){
 
-	if ( is_page() && is_page_template( 'page-full-no-title.php' ) && get_the_ID() == $post_id ) {
+	if ( is_page() && is_page_template( 'page-full-no-title.php' ) && get_the_ID() == $post_id && get_post_meta( get_the_ID(), 'panels_data', true ) != '' ) {
 
-		$page_template = get_post_meta( get_the_ID(), 'focus_page_header', true );
-		if ( isset( $page_template['move'] ) && $page_template['move'] ) {
+		$page_template = get_post_meta( get_the_ID(), 'focus-page-header', true );
+		if ( isset( $page_template ) && $page_template == 'yes' ) {
 
 			unset( $data['grids'][0] );
 			$data['grids'] = array_values( $data['grids'] );
@@ -292,3 +297,17 @@ function focus_replace_panels_data( $data, $post_id ){
 	return $data;
 }
 add_filter( 'siteorigin_panels_data', 'focus_replace_panels_data', 10, 2 );
+
+/**
+ * Check if content area needs to be displayed
+ *
+ * It'll only ever not be displayed if there's no content, there's a video, the author isn't shown, the sidebar doesn't have any widgets and comments are disabled.
+ */ 
+function focus_display_content_area() {
+	$the_content = get_the_content();
+	if ( ! ( empty( $the_content ) && focus_post_has_video() && !siteorigin_setting( 'general_display_author' ) && !is_active_sidebar( 'sidebar-' . ( is_page() ? 'page' : 'post') ) && !comments_open() ) ) {
+		return true;
+	} else {
+		return false;
+	}
+}
